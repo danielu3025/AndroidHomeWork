@@ -16,7 +16,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomeWork2first" />
-        <activity android:name=".HomeWork2secund"></activity>
+        <activity android:name=".HomeWork2secund" />
+        <activity android:name=".ConstraintLayout1" />
+        <activity android:name=".ConstrianLayout2" />
+        <activity android:name=".ConstrainLayout3"></activity>
     </application>
 
 </manifest>

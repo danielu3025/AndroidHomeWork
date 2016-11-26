@@ -26,9 +26,9 @@ public class MainActivity extends AppCompatActivity {
         apps = new ArrayList<>();
 
         app wh1 = new app("Home Work 1",new Intent(getApplicationContext(), HomeWork2first.class));
-        app wh2 = new app("ConstraintLayout 1",new Intent(getApplicationContext(),MainActivity.class));
-        app wh3 = new app("ConstraintLayout 2",new Intent(getApplicationContext(),MainActivity.class));
-        app wh4 = new app("ConstraintLayout 3",new Intent(getApplicationContext(),MainActivity.class));
+        app wh2 = new app("ConstraintLayout 1",new Intent(getApplicationContext(),ConstraintLayout1.class));
+        app wh3 = new app("ConstraintLayout 2",new Intent(getApplicationContext(),ConstrianLayout2.class));
+        app wh4 = new app("ConstraintLayout 3",new Intent(getApplicationContext(),ConstrainLayout3.class));
 
 
         apps.add(wh1);
