@@ -39,7 +39,7 @@ public class MyBirthdays extends AppCompatActivity {
     static String dateInput;
     EditText nameInput;
     EditText commnetInput;
-    ArrayList<Record>bdList;
+    ArrayList<Record> bdList;
     ListView bdListView;
     ArrayAdapter<Record> arrayadapter;
 
@@ -54,25 +54,21 @@ public class MyBirthdays extends AppCompatActivity {
 
             myDB = this.openOrCreateDatabase("danielDb", MODE_PRIVATE, null);
             myDB.execSQL("CREATE TABLE IF NOT EXISTS birthDayTable (name VARCHAR, date  VARCHAR, nb INTEGER(3), comment VARCHAR, id INTEGER PRIMARY KEY)");
-           // myDB.execSQL("INSERT INTO birthDayTable (name, date, nb) VALUES (';+"', '14/11/1990', 370)");
+            // myDB.execSQL("INSERT INTO birthDayTable (name, date, nb) VALUES (';+"', '14/11/1990', 370)");
 
-            nameInput = (EditText)findViewById(R.id.inpName);
-            commnetInput = (EditText)findViewById(R.id.inpComment);
-            bdList =new ArrayList<>();
-
-
-
+            nameInput = (EditText) findViewById(R.id.inpName);
+            commnetInput = (EditText) findViewById(R.id.inpComment);
+            bdList = new ArrayList<>();
 
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         bdListView = (ListView) findViewById(R.id.bdlistView);
-        arrayadapter = new ArrayAdapter<Record>(this, android.R.layout.simple_list_item_1,bdList);
+        arrayadapter = new ArrayAdapter<Record>(this, android.R.layout.simple_list_item_1, bdList);
         bdListView.setAdapter(arrayadapter);
 
         updateDb();
-
 
 
     }
@@ -99,11 +95,11 @@ public class MyBirthdays extends AppCompatActivity {
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             month++;
-            if (month >12 ){
+            if (month > 12) {
                 month = 1;
             }
 
-            dateInput = String.format("%d/%d/%d",month,day,year);
+            dateInput = String.format("%d/%d/%d", month, day, year);
         }
     }
 
@@ -112,21 +108,56 @@ public class MyBirthdays extends AppCompatActivity {
     public void addNewRecord(View view) {
         SqlHaendler sqlh = new SqlHaendler();
         sqlh.run();
+
+        Runnable userthred = (new Runnable() {
+
+            public Runnable start() {
+                run();
+                return null;
+            }
+
+            @Override
+            public void run() {
+                try {
+                    String name = String.valueOf(nameInput.getText());
+                    String date = dateInput;
+                    String comment = String.valueOf(commnetInput.getText());
+
+                    if (date == null || comment == null || name == null || name.isEmpty() || date.isEmpty() || comment.isEmpty()) {
+
+                    } else {
+                        int days = calcDays(date);
+                        String text = String.format("INSERT INTO birthDayTable (name, date, nb, comment) VALUES ('%s', '%s', %d, '%s')", name, date, days, comment);
+                        myDB.execSQL(text);
+                        updateDb();
+                        nameInput.setText("");
+                        commnetInput.setText("");
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
     }
 
     private int getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
         long diffInMillies = date2.getTime() - date1.getTime();
         return (int) timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS);
     }
-    private void sortBday(){
+
+    private void sortBday() {
         Collections.sort(bdList, new Comparator<Record>() {
-            @Override public int compare(Record r1, Record r2) {
+            @Override
+            public int compare(Record r1, Record r2) {
                 return r1.getNdDays() - r2.getNdDays();
             }
         });
     }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public int calcDays(String date){
+    public int calcDays(String date) {
         int days = 0;
         Date today = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -138,14 +169,15 @@ public class MyBirthdays extends AppCompatActivity {
         }
         convertedDate.setYear(today.getYear());
         days = getDateDiff(today, convertedDate, TimeUnit.DAYS);
-        if (days < 0 ){
-            convertedDate.setYear(today.getYear()+1);
+        if (days < 0) {
+            convertedDate.setYear(today.getYear() + 1);
             days = getDateDiff(today, convertedDate, TimeUnit.DAYS);
         }
-        return  days;
+        return days;
     }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public  void updateDb(){
+    public void updateDb() {
         try {
             bdList.clear();
             Cursor c = myDB.rawQuery("SELECT * FROM birthDayTable", null);
@@ -157,26 +189,28 @@ public class MyBirthdays extends AppCompatActivity {
 
             try {
                 while (c.moveToNext()) {
-                    Record nr = new Record(c.getString(nameIndex),c.getString(dateIndex),c.getString(commentIndex),c.getInt(nbIndex));
+                    Record nr = new Record(c.getString(nameIndex), c.getString(dateIndex), c.getString(commentIndex), c.getInt(nbIndex));
                     bdList.add(nr);
                 }
             } finally {
                 c.close();
             }
             myDB.execSQL("DELETE FROM birthDayTable WHERE name !='###$$$$'");
-            for (Record record : bdList)
-            {
+            for (Record record : bdList) {
                 record.setNdDays(calcDays(record.getDate()));
-                String text = String.format("INSERT INTO birthDayTable (name, date, nb, comment) VALUES ('%s', '%s', %d, '%s')",record.getName(), record.getDate(),record.ndDays,record.comment);
+                String text = String.format("INSERT INTO birthDayTable (name, date, nb, comment) VALUES ('%s', '%s', %d, '%s')", record.getName(), record.getDate(), record.ndDays, record.comment);
                 myDB.execSQL(text);
             }
             sortBday();
             arrayadapter.notifyDataSetChanged();
 
-        }catch (Exception e){e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
     public boolean onTouchEvent(MotionEvent event) {
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.
                 INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         return true;
@@ -187,83 +221,62 @@ public class MyBirthdays extends AppCompatActivity {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public void run() {
-            try {
-                String name  = String.valueOf(nameInput.getText());
-                String date =  dateInput;
-                String comment = String.valueOf(commnetInput.getText()) ;
 
-                if (date == null || comment==null|| name == null || name.isEmpty() || date.isEmpty() || comment.isEmpty() ){
-
-                }
-                else {
-                    int days = calcDays(date);
-                    String text = String.format("INSERT INTO birthDayTable (name, date, nb, comment) VALUES ('%s', '%s', %d, '%s')", name, date,days,comment);
-                    myDB.execSQL(text);
-                    updateDb();
-                    nameInput.setText("");
-                    commnetInput.setText("");
-                }
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
 
         }
-
-    }
-}
-
-
-
-class Record{
-    String name;
-
-    public String getName() {
-        return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
-    public String getDate() {
-        return date;
-    }
+    class Record {
+        String name;
 
-    public void setDate(String date) {
-        this.date = date;
-    }
+        public String getName() {
+            return name;
+        }
 
-    public String getComment() {
-        return comment;
-    }
+        public void setName(String name) {
+            this.name = name;
+        }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+        public String getDate() {
+            return date;
+        }
 
-    public int getNdDays() {
-        return ndDays;
-    }
+        public void setDate(String date) {
+            this.date = date;
+        }
 
-    public void setNdDays(int ndDays) {
-        this.ndDays = ndDays;
-    }
+        public String getComment() {
+            return comment;
+        }
 
-    public Record(String name, String date, String comment, int ndDays) {
-        this.name = name;
-        this.date = date;
-        this.comment = comment;
-        this.ndDays = ndDays;
-    }
+        public void setComment(String comment) {
+            this.comment = comment;
+        }
 
-    @Override
-    public String toString() {
-        return name + " " + date;
-    }
+        public int getNdDays() {
+            return ndDays;
+        }
 
-    String date;
-    String comment;
-    int ndDays;
+        public void setNdDays(int ndDays) {
+            this.ndDays = ndDays;
+        }
+
+        public Record(String name, String date, String comment, int ndDays) {
+            this.name = name;
+            this.date = date;
+            this.comment = comment;
+            this.ndDays = ndDays;
+        }
+
+        @Override
+        public String toString() {
+            return name + " " + date;
+        }
+
+        String date;
+        String comment;
+        int ndDays;
+    }
 }
 
