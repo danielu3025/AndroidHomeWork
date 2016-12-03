@@ -29,12 +29,16 @@ public class MainActivity extends AppCompatActivity {
         app wh2 = new app("ConstraintLayout 1",new Intent(getApplicationContext(),ConstraintLayout1.class));
         app wh3 = new app("ConstraintLayout 2",new Intent(getApplicationContext(),ConstrianLayout2.class));
         app wh4 = new app("ConstraintLayout 3",new Intent(getApplicationContext(),ConstrainLayout3.class));
+        app wh5 = new app("My Birthdays",new Intent(getApplicationContext(),MyBirthdays.class));
+
 
 
         apps.add(wh1);
         apps.add(wh2);
         apps.add(wh3);
         apps.add(wh4);
+        apps.add(wh5);
+
 
         ArrayAdapter<app> arrayadapter = new ArrayAdapter<app>(this, android.R.layout.simple_list_item_1,apps);
         mylistview.setAdapter(arrayadapter);
