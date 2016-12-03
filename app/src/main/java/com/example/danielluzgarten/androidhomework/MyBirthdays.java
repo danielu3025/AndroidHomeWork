@@ -110,27 +110,8 @@ public class MyBirthdays extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
 
     public void addNewRecord(View view) {
-        try {
-
-            String name  = String.valueOf(nameInput.getText());
-            String date =  dateInput;
-            String comment = String.valueOf(commnetInput.getText()) ;
-
-            if (date == null || comment==null|| name == null || name.isEmpty() || date.isEmpty() || comment.isEmpty() ){
-                Toast.makeText(this,"one or more fields are blank",Toast.LENGTH_LONG).show();
-            }
-            else {
-                int days = calcDays(date);
-                String text = String.format("INSERT INTO birthDayTable (name, date, nb, comment) VALUES ('%s', '%s', %d, '%s')", name, date,days,comment);
-                myDB.execSQL(text);
-                updateDb();
-                nameInput.setText("");
-                commnetInput.setText("");
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        SqlHaendler sqlh = new SqlHaendler();
+        sqlh.run();
     }
 
     private int getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
@@ -140,7 +121,7 @@ public class MyBirthdays extends AppCompatActivity {
     private void sortBday(){
         Collections.sort(bdList, new Comparator<Record>() {
             @Override public int compare(Record r1, Record r2) {
-                return r1.getNdDays() - r2.getNdDays(); // Ascending
+                return r1.getNdDays() - r2.getNdDays();
             }
         });
     }
@@ -200,7 +181,39 @@ public class MyBirthdays extends AppCompatActivity {
         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         return true;
     }
+
+    class SqlHaendler implements Runnable {
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        public void run() {
+            try {
+                String name  = String.valueOf(nameInput.getText());
+                String date =  dateInput;
+                String comment = String.valueOf(commnetInput.getText()) ;
+
+                if (date == null || comment==null|| name == null || name.isEmpty() || date.isEmpty() || comment.isEmpty() ){
+
+                }
+                else {
+                    int days = calcDays(date);
+                    String text = String.format("INSERT INTO birthDayTable (name, date, nb, comment) VALUES ('%s', '%s', %d, '%s')", name, date,days,comment);
+                    myDB.execSQL(text);
+                    updateDb();
+                    nameInput.setText("");
+                    commnetInput.setText("");
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+
+    }
 }
+
+
 
 class Record{
     String name;
