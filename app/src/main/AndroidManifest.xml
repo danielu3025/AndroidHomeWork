@@ -20,10 +20,10 @@
         <activity android:name=".ConstraintLayout1" />
         <activity android:name=".ConstrianLayout2" />
         <activity android:name=".ConstrainLayout3" />
-        <activity android:name=".MyBirthdays"
-            android:windowSoftInputMode="stateHidden"
-            ></activity>
-
+        <activity
+            android:name=".MyBirthdays"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".Settings"></activity>
     </application>
 
 </manifest>

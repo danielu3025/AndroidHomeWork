@@ -1,16 +1,18 @@
 package com.example.danielluzgarten.androidhomework;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -18,6 +20,23 @@ public class MainActivity extends AppCompatActivity {
 
     ListView mylistview;
     ArrayList<app> apps;
+    SharedPreferences animation;
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main_menu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    public boolean onOptionsItemSelected(MenuItem menuItem){
+        super.onOptionsItemSelected(menuItem);
+        Intent intent = new Intent(getApplicationContext(), Settings.class);
+        startActivity(intent);
+        //overridePendingTransition(R.anim.rotate, R.anim.roteateout);
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,11 +52,14 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
         apps.add(wh1);
         apps.add(wh2);
         apps.add(wh3);
         apps.add(wh4);
         apps.add(wh5);
+
+
 
 
         ArrayAdapter<app> arrayadapter = new ArrayAdapter<app>(this, android.R.layout.simple_list_item_1,apps);
@@ -47,14 +69,27 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int i, long id) {
 
                 startActivity(apps.get(i).getAppIntent());
+                animationPicker();
 
             }
         });
     }
+    public void animationPicker(){
+        animation = this.getSharedPreferences("com.example.danielluzgarten.androidhomework", Context.MODE_PRIVATE);
+        String  animTitle =  animation.getString("animation-name","") ;
 
-    public void test(View view) {
-        Intent intent1 = new Intent(getApplicationContext(), HomeWork2first.class);
-        startActivity(intent1);
+        if (animTitle.equals("Slide")){
+            overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+        }
+        else if (animTitle.equals("Rotate")){
+            overridePendingTransition(R.anim.rotate, R.anim.roteateout);
+        }
+        else if (animTitle.equals("Back-in")){
+            overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
+        }
+        else {
+            return;
+        }
     }
 }
 class app {
