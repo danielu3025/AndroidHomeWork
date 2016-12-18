@@ -49,8 +49,7 @@ public class MainActivity extends AppCompatActivity {
         app wh3 = new app("ConstraintLayout 2",new Intent(getApplicationContext(),ConstrianLayout2.class));
         app wh4 = new app("ConstraintLayout 3",new Intent(getApplicationContext(),ConstrainLayout3.class));
         app wh5 = new app("My Birthdays",new Intent(getApplicationContext(),MyBirthdays.class));
-
-
+        app wh6 = new app("My Birthdays",new Intent(getApplicationContext(),draw.class));
 
 
         apps.add(wh1);
@@ -58,9 +57,9 @@ public class MainActivity extends AppCompatActivity {
         apps.add(wh3);
         apps.add(wh4);
         apps.add(wh5);
+        apps.add(wh6);
 
-
-
+        startActivity(wh6.getAppIntent());
 
         ArrayAdapter<app> arrayadapter = new ArrayAdapter<app>(this, android.R.layout.simple_list_item_1,apps);
         mylistview.setAdapter(arrayadapter);

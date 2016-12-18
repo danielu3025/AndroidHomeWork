@@ -10,7 +10,6 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
-
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -24,7 +23,9 @@
         <activity
             android:name=".MyBirthdays"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".Settings"></activity>
+        <activity android:name=".Settings" />
+        <activity android:name=".draw">
+        </activity>
     </application>
 
 </manifest>
